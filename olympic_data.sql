@@ -72,7 +72,19 @@ AND Age = (
 );
 
 -- 10.Find the Ratio of male and female athletes participated in all olympic games.
-
+with t1 as (select sex, count(1) as cnt,
+	row_number() over(order by count(1)) as rn
+	from olympic_history
+	group by sex),
+	male_cnt as (
+		select cnt from t1 where rn=2
+    ),
+    fem_cnt as (
+		select cnt from t1 where rn=1
+    )
+    
+select male_cnt.cnt/fem_cnt.cnt as ratio 
+from male_cnt, fem_cnt;
 
 
 -- 11. Fetch the top 5 athletes who have won the most gold medals.
